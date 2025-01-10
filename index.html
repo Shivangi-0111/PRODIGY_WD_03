@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shiv's Tic-Tac-Toe</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #ffebcd; 
+            text-align: center;
+        }
+
+        #shiv-game-board { 
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-gap: 5px;
+            border: 2px solid #333;
+            padding: 10px;
+            background-color: #fff8dc; 
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .ss-cell { 
+            width: 100px;
+            height: 100px;
+            border: 1px solid #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3em;
+            cursor: pointer;
+            border-radius: 5px;
+            background-color: #add8e6; 
+            transition: background-color 0.3s;
+        }
+
+        .ss-cell:hover {
+            background-color: #87ceeb; 
+        }
+
+        #ss-message { 
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #ff4500; 
+        }
+
+        #ss-reset-button { 
+            padding: 10px 20px;
+            margin: 10px auto;
+            display: block;
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        #ss-reset-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div id="shiv-game-board">
+        <div class="ss-cell" data-ss-index="0"></div>
+        <div class="ss-cell" data-ss-index="1"></div>
+        <div class="ss-cell" data-ss-index="2"></div>
+        <div class="ss-cell" data-ss-index="3"></div>
+        <div class="ss-cell" data-ss-index="4"></div>
+        <div class="ss-cell" data-ss-index="5"></div>
+        <div class="ss-cell" data-ss-index="6"></div>
+        <div class="ss-cell" data-ss-index="7"></div>
+        <div class="ss-cell" data-ss-index="8"></div>
+    </div>
+    <div id="ss-message"></div>
+    <button id="ss-reset-button" onclick="ssResetGame()">Reset Game</button>
+
+    <script>
+        const ssCells = document.querySelectorAll('.ss-cell');
+        const ssMessage = document.getElementById('ss-message'); 
+        const ssResetButton = document.getElementById('ss-reset-button');
+        let ssCurrentPlayer = 'X'; 
+        let ssGameBoard = ['', '', '', '', '', '', '', '', '']; 
+        let ssGameWon = false;
+
+        function ssCheckWin() { 
+            const ssWinPatterns = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+
+            for (let pattern of ssWinPatterns) {
+                const [a, b, c] = pattern;
+                if (ssGameBoard[a] && ssGameBoard[a] === ssGameBoard[b] && ssGameBoard[a] === ssGameBoard[c]) {
+                    ssGameWon = true;
+                    return ssGameBoard[a];
+                }
+            }
+            if (!ssGameBoard.includes("")) {
+                ssGameWon = true;
+                return "Tie";
+            }
+            return null;
+        }
+
+        function ssHandleClick(event) { 
+            if (ssGameWon) return;
+            const cell = event.target;
+            const index = cell.dataset.ssIndex; 
+
+            if (ssGameBoard[index] === '') {
+                ssGameBoard[index] = ssCurrentPlayer;
+                cell.textContent = ssCurrentPlayer;
+
+                const winner = ssCheckWin();
+                if (winner) {
+                    if(winner === "Tie"){
+                        ssMessage.textContent = "It's a Tie!";
+                    } else {
+                        ssMessage.textContent = `Player ${winner} wins!`;
+                    }
+                    return;
+                }
+
+                ssCurrentPlayer = ssCurrentPlayer === 'X' ? 'O' : 'X';
+                ssMessage.textContent = `Player ${ssCurrentPlayer}'s turn`;
+            }
+        }
+
+        function ssResetGame() { 
+            ssGameBoard = ['', '', '', '', '', '', '', '', ''];
+            ssCurrentPlayer = 'X';
+            ssGameWon = false;
+            ssMessage.textContent = `Player ${ssCurrentPlayer}'s turn`;
+            ssCells.forEach(cell => {
+                cell.textContent = "";
+            });
+        }
+
+        ssCells.forEach(cell => {
+            cell.addEventListener('click', ssHandleClick);
+        });
+
+        ssResetGame();
+    </script>
+</body>
+</html>
